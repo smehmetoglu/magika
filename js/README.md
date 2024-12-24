@@ -1,4 +1,4 @@
-# Magika JavaScript library
+# Magika TypeScript/JavaScript library
 
 Use Magika in the browser or in Node!
 
@@ -14,7 +14,7 @@ Simple usage in Node:
 
 ```js
 import { readFile } from "fs/promises";
-import { Magika } from "magika";
+import { MagikaNode as Magika } from "magika";
 
 const data = await readFile("some file");
 const magika = new Magika();
@@ -28,7 +28,7 @@ Simple usage in the browser:
 ```js
 import { Magika } from "magika";
 
-const someFile = new File(["# Hello I am a markdown file"], "hello.md");
+const file = new File(["# Hello I am a markdown file"], "hello.md");
 const fileBytes = new Uint8Array(await file.arrayBuffer());
 const magika = new Magika();
 await magika.load();
@@ -36,13 +36,13 @@ const prediction = await magika.identifyBytes(fileBytes);
 console.log(prediction);
 ```
 
-For more, see our [documentation](./DOCS.md).
+For more, see our [documentation](../docs/js.md).
 
-# Commmand-line tool
+# Command-line tool
 
-Please use the official CLI (with `pip install magika`) as it's considerably faster than this one.
+Please use the official CLI (with `pip install magika`) as it can perform batch processing and search for files recursivelyw.
 Read more about that in the main [README](../README.md).
-This one, is useful to load the TensorflowJS model and see that it works as expected.
+This one is useful to load the TensorflowJS model and see that it works as expected.
 
 Install it with `npm install -g magika`. You can then run it by executing `magika-js <some files>`
 
@@ -76,12 +76,33 @@ url = {https://github.com/google/magika}
 }
 ```
 
+# Loading the model and configuration
+
+MagikaJS is designed flexible in how you provide the model and configuration file to it.
+
+Both the Node and browser versions accept URLs to asyncronously load these two assets.
+```js
+await magika.load({
+        modelURL: "https://...",
+        configURL: "https://...",
+    });
+```
+
+The Node version also allows to load local files.
+```js
+await magika.load({
+        modelPath: './assets/...',
+        configPath: './assets/...'
+    });
+```
+
 # Development
 
 Using the model hosted On Github:
 
 ```bash
 yarn install
+yarn run build
 yarn run bin -- README.md
 ```
 
@@ -89,6 +110,16 @@ Using the local model:
 
 ```bash
 yarn install
+yarn run build
 (cd ../website; yarn install; yarn run dev) &
 yarn run bin --model-url http://localhost:5173/magika/model/model.json --config-url http://localhost:5173/magika/model/config.json ../tests_data/mitra/*
+```
+
+## Testing
+
+Execute:
+```bash
+yarn install
+yarn run build
+yarn run test
 ```
